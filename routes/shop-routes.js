@@ -17,8 +17,4 @@ router.get("/detail/:itemId", getShopItemByItemId);
 
 
 
-
-
-
-
 module.exports = router;
