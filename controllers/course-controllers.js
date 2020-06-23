@@ -6,13 +6,11 @@ const router = require("../routes/courses-routes");
 //抓所有課程
 const getCourses = async (req, res) => {
   const newRow = {}
-
   const [rows] = await db.query("SELECT * FROM courses INNER JOIN coursescategory ON courses.courseCategoryId = coursescategory.courseCategoryId INNER JOIN employee ON courses.staffId = employee.Eid ORDER BY courseTime");
   // console.log(rows)
   if (rows) newRow.coursesRow = rows
   // console.log(newRow.coursesRow)
   for (i of rows) {
-
     const fm = 'ddd MM DD HH:mm'
     i.courseTime = moment(i.courseTime).format(fm)
     // console.log(i.courseTime)
