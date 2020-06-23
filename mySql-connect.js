@@ -4,7 +4,7 @@ const mysql = require("mysql2");
 //   host: "localhost",
 //   user: "root",
 //   password: "",
-//   database: "gym-project",
+//   database: "wow-gym",
 //   waitForConnections: true,
 //   connectionLimit: 10,
 //   queueLimit: 0,
