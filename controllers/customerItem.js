@@ -6,6 +6,42 @@ const getcustomerItems = async (req, res) => {
   res.json(rows);
 };
 
+const getreplylist = async (req, res) => {
+  const [rows] = await db.query("SELECT * FROM replylist")
+  res.json(rows);
+};
+
+const getfaqlist = async (req, res) => {
+  const [rows] = await db.query("SELECT `faqtitle`.`faqkindname`,`faqlist`.`faqid`,`faqlist`.`faqtitle`,`faqlist`.`faqbody`,`faqlist`.`createtime` FROM `faqlist` INNER JOIN `faqtitle` ON `faqlist`.`faqkind` = `faqtitle`.`faqkind`" )
+  res.json(rows);
+};
+
+const postcustomerItems = async (req, res) => {
+  const {memberid, complaintkind,name,phonenumber,email,complainttitle,complainttextarea} = req.body;
+    const sql = 'INSERT into `customerservice` (`memberid`, `complaintkind`, `name`, `phonenumber`, `email`,`complainttitle`, `complainttextarea`) VALUES (? , ?, ? , ? , ?, ?, ?)';
+    const result = await db.query(sql,[memberid, complaintkind,name,phonenumber,email,complainttitle,complainttextarea])
+  
+  // const {Complaintid, responder, replycontent} = req.body;
+  // console.log("Complaintid",Complaintid,"responder",responder,"replycontent",replycontent)
+  res.json(result);
+}
+
+const postreplylist = async (req, res) => {
+  // for (let i=0; i < req.body.length; i ++){
+  //   const {Complaintid, responder, replycontent} = req.body;
+  //   const sql = ('INSERT into `replylist`(`Complaintid`, `responder`, `replycontent`) VALUES (?, ?, ?)')
+
+  //   const result = await db.query(sql,[Complaintid,responder,replycontent])
+  // }
+      const {complaintid, responder, replycontent} = req.body;
+      const sql = ('INSERT into `replylist`(`complaintid`, `responder`, `replycontent`) VALUES (?, ?, ?)')
+      const result = await db.query(sql,[complaintid,responder,replycontent])
+
+  // const {Complaintid, responder, replycontent} = req.body;
+  // console.log("Complaintid",Complaintid,"responder",responder,"replycontent",replycontent)
+  res.json(result);
+}
+ 
 // const getShopCollection = async (req, res) => {
 //   try {
 //     const collectionId = req.params.collection;
@@ -29,4 +65,4 @@ const getcustomerItems = async (req, res) => {
 //   }
 // };
 
-module.exports = {getcustomerItems};
+module.exports = {getcustomerItems , postreplylist , getreplylist , getfaqlist ,postcustomerItems };

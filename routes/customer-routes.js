@@ -1,15 +1,23 @@
 const express = require("express");
+const router = express.Router();
 
 const {
   getcustomerItems,
-  // getShopCollection,
-  // getShopItemByItemId,
+  postreplylist,
+  getreplylist,
+  getfaqlist,
+  postcustomerItems,
 } = require("../controllers/customerItem");
 
-const router = express.Router();
-
 router.get("/", getcustomerItems);
-// router.get("/:collection", getShopCollection);
-// router.get("/detail/:itemId", getShopItemByItemId);
+
+router.get("/faqlist", getfaqlist);
+
+router.get("/getreplylist", getreplylist);
+
+router.post('/test', postreplylist);
+
+router.post('/', postcustomerItems);
+
 
 module.exports = router;
