@@ -12,8 +12,8 @@ const {
 const router = express.Router();
 
 //抓課程資料表的課程資訊
-router.get("/", getCourses);
-router.get("/courses/:courseId", getCoursesID)
+router.get("/data", getCourses);
+router.get("/courses/data/:courseId", getCoursesID)
 
 //會員中心抓會員預約的課程資訊
 router.get("/memberBookingData", getMemberBookingData)

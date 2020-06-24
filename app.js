@@ -2,8 +2,8 @@ const express = require("express");
 
 const shopRoutes = require("./routes/shop-routes");
 const coursesRoutes = require("./routes/courses-routes");
-const categoryRoutes = require("./routes/category-routes")
-const employeeRoutes =require("./routes/employee-routes")
+const categoryRoutes = require("./routes/category-routes");
+const employeeRoutes = require("./routes/employee-routes");
 const customerRoutes = require("./routes/customer-routes");
 const OrderRoutes = require("./routes/orders-routes");
 const memberRoutes = require("./routes/member-routes");
@@ -33,7 +33,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api", employeeRoutes);
 app.use("/api/customerRoutes", customerRoutes);
 app.use("/Orders", OrderRoutes);
-app.use("/api", memberRoutes);
+app.use("/api/user", memberRoutes);
 app.use("/api/articles", articleRoutes);
 
 // Error handler
@@ -50,5 +50,4 @@ app.use((error, req, res, next) => {
 
 app.listen(process.env.PORT || 5000, () => console.log("server start 🥶"));
 
-
-// ------
+// ---------
