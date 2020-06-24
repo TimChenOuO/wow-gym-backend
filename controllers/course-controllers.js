@@ -59,7 +59,7 @@ const getBookingData = async (req, res) => {
 
 //抓會員預約哪些課程及課程資料（給會員中心用）
 const getMemberBookingData = async (req, res) => {
-  const [rows] = await db.query("SELECT `m`.`memberId`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda` FROM `member` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`memberId` = `cb`.`memberId` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid`");
+  const [rows] = await db.query("SELECT `m`.`memberId`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda` FROM `user` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`memberId` = `cb`.`memberId` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid`");
   res.json(rows)
 }
 
