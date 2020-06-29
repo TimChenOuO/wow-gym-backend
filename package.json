@@ -1,5 +1,5 @@
 {
-  "name": "gym-api",
+  "name": "wow-gym-api",
   "version": "1.0.0",
   "description": "gym-api-server",
   "main": "index.js",

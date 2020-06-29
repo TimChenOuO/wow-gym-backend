@@ -71,20 +71,28 @@ const getMemberId = async (req, res, next) => {
 //   console.log(output);
 // };
 
-const InsertCheckOutPage = (req, res) => {
-  // console.log(req.body.data);
+const InsertCheckOutPage = async (req, res) => {
   const output = {
     success: false,
   };
+  // Check sign up email have exist or not
+  const [checkEmailList] = await db.query("SELECT memberAccount FROM user");
+  if (
+    checkEmailList.find((user) => user.memberAccount === req.body.memberAccount)
+  )
+    return res.json(output);
+
+  // Insert sign up info in DB
   const sql = "INSERT INTO `user` set ?";
-  db.query(sql, [req.body]).then(([r]) => {
-    output.results = r;
-    if (r.affectedRows && r.insertId) {
-      output.success = true;
-    }
-    res.json(output);
-  });
-  // res.json(req.body);
+  await db.query(sql, [req.body]);
+
+  // Query sign up info from DB
+  const [signUpUser] = await db.query(
+    "SELECT * FROM user ORDER BY memberId DESC LIMIT 1"
+  );
+  output.success = true;
+  output.currentUser = signUpUser[0];
+  res.json(output);
 };
 
 module.exports = { getMember, getMemberId, InsertCheckOutPage };
