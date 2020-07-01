@@ -41,6 +41,7 @@ const whiteList = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "https://gym-project-backend.herokuapp.com",
+  "https://wow-gym-1874c.web.app/",
 ];
 const corsOptions = {
   credentials: true,
