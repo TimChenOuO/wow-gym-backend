@@ -1,4 +1,6 @@
 const express = require("express");
+const passport = require("passport");
+const session = require("express-session");
 
 const shopRoutes = require("./routes/shop-routes");
 const coursesRoutes = require("./routes/courses-routes");
@@ -14,6 +16,20 @@ const bodyParser = express.urlencoded({ extended: false });
 // Middleware
 app.use(bodyParser);
 app.use(express.json());
+
+require("./passport");
+
+app.use(
+  session({
+    secret: "wowowowwowo",
+    resave: "false",
+    saveUninitialized: "false",
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Cors
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

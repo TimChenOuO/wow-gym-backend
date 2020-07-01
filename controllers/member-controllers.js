@@ -29,7 +29,7 @@ const getMemberId = async (req, res, next) => {
       res.json({ memberItem: newRow });
     }
   } catch (err) {
-    return next(new HttpError("Can't find shop item", 404));
+    // return next(new HttpError("Can't find shop item", 404));
   }
 };
 
