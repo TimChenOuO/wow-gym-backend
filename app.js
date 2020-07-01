@@ -1,6 +1,8 @@
 const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
+const cors = require("cors");
+// const cookieSession = require("cookie-session");
 
 const shopRoutes = require("./routes/shop-routes");
 const coursesRoutes = require("./routes/courses-routes");
@@ -12,12 +14,12 @@ const memberRoutes = require("./routes/member-routes");
 const articleRoutes = require("./routes/article-routes");
 const app = express();
 const bodyParser = express.urlencoded({ extended: false });
+const cookieParser = require("cookie-parser");
 
 // Middleware
+app.use(cookieParser());
 app.use(bodyParser);
 app.use(express.json());
-
-require("./passport");
 
 app.use(
   session({
@@ -27,19 +29,31 @@ app.use(
   })
 );
 
+// Passport
+require("./passport");
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Cors
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POSH, PATCH, DELETE");
-  next();
-});
+const whiteList = [
+  "undefined",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://gym-project-backend.herokuapp.com",
+];
+const corsOptions = {
+  credentials: true,
+  origin: (origin, cb) => {
+    // console.log(origin);
+    if (whiteList.indexOf(origin) >= 0) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  },
+};
+app.use(cors(corsOptions));
 
 // Router
 app.use("/api/shop", shopRoutes);

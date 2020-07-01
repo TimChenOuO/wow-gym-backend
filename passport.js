@@ -1,17 +1,20 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const db = require("./mySql-connect");
 
 passport.serializeUser((user, done) => {
-  //   console.log(user);
-  done(null, user.memberId);
+  // console.log("serializeUser", user);
+  done(null, user.id);
 });
 
-passport.deserializeUser(async (id, done) => {
-  const [row] = await db.query("select * from user where memberId = " + id);
-  console.log("fuck");
-  done(null, row[0]);
+passport.deserializeUser((id, done) => {
+  // console.log(id);
+  db.query("select * from user where id = " + id, (err, row) => {
+    // console.log("deserializeUser", row[0]);
+    done(null, { ...row[0], memberPwd: null });
+  });
 });
 
 // Sign up
@@ -34,12 +37,12 @@ passport.use(
           newUser.memberPwd = memberPwd;
           await db.query("INSERT INTO `user` set ?", [newUser]);
           const [user] = await db.query(
-            "SELECT * FROM user ORDER BY memberId DESC LIMIT 1"
+            "SELECT * FROM user ORDER BY id DESC LIMIT 1"
           );
           return done(null, user[0]);
         } else {
-          //   req.errMessage = "This email is already taken";
-          return done(null, "This email is already taken");
+          // req.errMessage = "This email is already taken";
+          return done(null, false, { message: "Incorrect password." });
         }
       } catch (err) {
         console.log(err);
@@ -47,7 +50,7 @@ passport.use(
     }
   )
 );
-
+// Sign in
 passport.use(
   "local-signin",
   new LocalStrategy(
@@ -71,6 +74,38 @@ passport.use(
         );
         // console.log(user);
         return done(null, user[0]);
+      }
+    }
+  )
+);
+
+// Google Sign in
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID:
+        "175789185885-1o4au64222k77b3erlp9q0ubdquc2l47.apps.googleusercontent.com",
+      clientSecret: "bYNzHgKNPAneuCxMlriP_TOw",
+      callbackURL: "/api/user/google/callback",
+      proxy: true,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      const [row] = await db.query(
+        `SELECT * FROM user WHERE googleId=${profile.id}`
+      );
+      if (row.length) {
+        done(null, row[0]);
+      } else {
+        const newUser = {};
+        newUser.googleId = profile.id;
+        newUser.memberName = profile.displayName;
+        newUser.memberAccount = profile.emails[0].value;
+
+        await db.query("INSERT INTO `user` set ?", [newUser]);
+        const [user] = await db.query(
+          `SELECT * FROM user WHERE googleId=${newUser.googleId}`
+        );
+        done(null, user[0]);
       }
     }
   )
