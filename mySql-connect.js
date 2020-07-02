@@ -15,6 +15,7 @@ const pool = mysql.createPool({
 });
 
 // production config
+
 // const pool = mysql.createPool({
 //   host: "eu-cdbr-west-03.cleardb.net",
 //   user: "b7aafd89bf2851",
@@ -23,3 +24,5 @@ const pool = mysql.createPool({
 // });
 
 module.exports = pool.promise();
+
+// -------

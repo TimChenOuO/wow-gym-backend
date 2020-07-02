@@ -1,20 +1,27 @@
 {
-  "name": "gym-api",
+  "name": "wow-gym-api",
   "version": "1.0.0",
   "description": "gym-api-server",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "TimChen",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.4",
+    "express-session": "^1.17.1",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
-    "mysql2": "^2.1.0"
+    "mysql2": "^2.1.0",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
