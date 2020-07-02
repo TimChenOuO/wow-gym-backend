@@ -3,21 +3,45 @@ const HttpError = require("../models/http-error");
 const moment = require("moment-timezone");
 const router = require("../routes/courses-routes");
 
-//抓所有課程
+//單純抓課程資訊
 const getCourses = async (req, res) => {
+  const newRow = {};
+  const [rows] = await db.query(
+    "SELECT * FROM `courses`"
+  );
+
+  // console.log(rows)
+
+  // console.log(newRow.coursesRow)
+  for (i of rows) {
+    const fm = "ddd MM DD HH:mm";
+    i.currentDay = i.courseTime.getDay()
+    i.courseTime2 = new Date(i.courseTime).getTime();
+    i.courseTime = moment(i.courseTime).format(fm);
+  }
+  if (rows) newRow.coursesRow = rows;
+  res.json(newRow);
+};
+
+//抓所有課程、教練資訊，新增兩個by 0630
+const getCoursesAndCoaches = async (req, res) => {
   const newRow = {};
   const [rows] = await db.query(
     "SELECT * FROM courses INNER JOIN coursescategory ON courses.courseCategoryId = coursescategory.courseCategoryId INNER JOIN employee ON courses.staffId = employee.Eid ORDER BY courseTime"
   );
+
   // console.log(rows)
-  if (rows) newRow.coursesRow = rows;
+
   // console.log(newRow.coursesRow)
   for (i of rows) {
     const fm = "ddd MM DD HH:mm";
+    i.currentDay = i.courseTime.getDay()
+    i.courseTime2 = new Date(i.courseTime).getTime();
     i.courseTime = moment(i.courseTime).format(fm);
-    // console.log(i.courseTime)
   }
+  if (rows) newRow.coursesRow = rows;
   res.json(newRow);
+  // console.log(newRow)
 };
 
 //抓課程種類（給課程表中的selector用）
@@ -37,16 +61,17 @@ const getCoursesID = async (req, res) => {
   try {
     const newRow = {};
     const courseId = req.params.courseId;
-    console.log(courseId);
+    // console.log(courseId);
     const [rows] = await db.query(
       `SELECT * FROM courses WHERE courseId=${courseId}`
     );
     if (rows) newRow.coursesRow = rows;
-    console.log(rows);
+    // console.log(rows);
     for (i of rows) {
       const fm = "ddd MM DD HH:mm";
+
       i.courseTime = moment(i.courseTime).format(fm);
-      // console.log(i.courseTime)
+      // console.log(i.courseTime.getDay())
     }
     res.json({ courseItem: newRow });
   } catch (err) {
@@ -61,10 +86,18 @@ const getBookingData = async (req, res) => {
 
 //抓會員預約哪些課程及課程資料（給會員中心用）
 const getMemberBookingData = async (req, res) => {
+  const newRow = {};
   const [rows] = await db.query(
-    "SELECT `m`.`memberId`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda` FROM `user` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`memberId` = `cb`.`memberId` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid`"
+    "SELECT `m`.`memberId`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda`, `e`.`Elicense`, `e`.`Eexpertise`, `e`.`Eimg` FROM `user` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`memberId` = `cb`.`memberId` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid` ORDER BY `c`.`courseTime`"
   );
-  res.json(rows);
+  for (i of rows) {
+    const fm = "ddd MM DD HH:mm";
+    i.currentDay = i.courseTime.getDay()
+    i.courseTime2 = new Date(i.courseTime).getTime();
+    i.courseTime3 = moment(i.courseTime).format(fm);
+  }
+  if (rows) newRow.coursesRow = rows;
+  res.json(newRow);
 };
 
 //預約課程
@@ -82,27 +115,55 @@ const bookingCourse = async (req, res) => {
   });
 };
 
-//取消預約
-const cancelBooking = async (req, res) => {
-  let referer = req.get("/bookingData/:courseBookingId"); // 從哪裡來
 
-  const sql = "DELETE FROM `courseBooking` WHERE courseBookingId=?";
-  db.query(sql, [req.params.courseBookingId]);
-  console.log(req.params.courseBookingId);
+//取消預約
+const updateBooking = async (req, res) => {
+
+  const sql = "UPDATE `courseBooking` SET `bookingState`='0' WHERE `courseBooking`.`courseBookingId`=?";
+  await db.query(sql, [req.params.courseBookingId]);
+  // console.log(req.params.courseBookingId);
   //  console.log(req.params.courseId)
-  if (referer) {
-    res.redirect(referer);
-  } else {
-    res.send("ok");
-  }
+
+  res.json({ msg: "ok" });
+
 };
+//預約後增加人數
+const addNumOfCourse = async (req, res) => {
+
+  const sql = "UPDATE `courses` SET `numberOfCourse`= `numberOfCourse`+1 WHERE `courses`.`courseId`=? ";
+  await db.query(sql, [req.body.courseId]);
+  // console.log(req.params.courseBookingId);
+  //  console.log(req.params.courseId)
+  const newSql = `SELECT numberOfCourse FROM courses WHERE courseId = ${req.body.courseId} `
+  // console.log(res.json(req.body))
+  const [row] = await db.query(newSql)
+  res.json(row[0])
+
+};
+
+//取消預約後減人數
+const reduceNumOfCourse = async (req, res) => {
+
+  const sql = "UPDATE `courses` SET `numberOfCourse`=`numberOfCourse`-1 WHERE `courses`.`courseId`=?";
+  await db.query(sql, [req.body.courseId]);
+  // console.log(req.params.courseBookingId);
+  //  console.log(req.params.courseId)
+  const newSql = `SELECT numberOfCourse FROM courses WHERE courseId = ${req.body.courseId} `
+  // console.log(res.json(req.body))
+  const [row] = await db.query(newSql)
+  res.json(row[0])
+};
+
 
 module.exports = {
   getCourses,
+  getCoursesAndCoaches,
   getCoursesCategory,
   getCoursesID,
   bookingCourse,
-  cancelBooking,
   getBookingData,
   getMemberBookingData,
+  addNumOfCourse,
+  updateBooking,
+  reduceNumOfCourse
 };

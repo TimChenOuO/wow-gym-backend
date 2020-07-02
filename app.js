@@ -1,4 +1,6 @@
 const express = require("express");
+// const morgan = require("morgan");
+const cors = require("cors")
 
 const shopRoutes = require("./routes/shop-routes");
 const coursesRoutes = require("./routes/courses-routes");
@@ -10,31 +12,48 @@ const memberRoutes = require("./routes/member-routes");
 const articleRoutes = require("./routes/article-routes");
 
 const app = express();
-const bodyParser = express.urlencoded({ extended: false });
 
+const corsOptions = {
+  origin:[
+    "http://localhost:5000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:3000"
+  ],
+  methods: "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS",
+  allowedHeaders:["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
+
+const bodyParser = express.urlencoded({ extended: false });
+// app.use(morgan("dev"));
 // Middleware
 app.use(bodyParser);
 app.use(express.json());
-// Cors
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POSH, PATCH, DELETE");
-  next();
-});
+
+
+
+
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin",'http://localhost:3000');
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POSH, PATCH, DELETE");
+//   next();
+// });
+
 
 // Router
-app.use("/api/shop", shopRoutes);
 app.use("/api/courses", coursesRoutes);
+app.use("/api/shop", shopRoutes);
 app.use("/api/category", categoryRoutes);
-app.use("/api", employeeRoutes);
 app.use("/api/customerRoutes", customerRoutes);
-app.use("/Orders", OrderRoutes);
 app.use("/api/user", memberRoutes);
 app.use("/api/articles", articleRoutes);
+app.use("/api", employeeRoutes);
+app.use("/Orders", OrderRoutes);
 
 // Error handler
 app.use((req, res, next) => {
