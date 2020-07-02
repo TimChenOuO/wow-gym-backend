@@ -35,6 +35,7 @@ passport.use(
         if (!exist) {
           newUser.memberAccount = memberAccount;
           newUser.memberPwd = memberPwd;
+          newUser.memberName = req.body.memberName;
           await db.query("INSERT INTO `user` set ?", [newUser]);
           const [user] = await db.query(
             "SELECT * FROM user ORDER BY id DESC LIMIT 1"
