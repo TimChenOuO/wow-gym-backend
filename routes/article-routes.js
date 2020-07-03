@@ -6,6 +6,8 @@ const {
   getComments,
   getArticleItemByMemberId,
   getArticleItemByArticleId,
+  getCommentsNumber,
+  getHotData,
   postArticleAddComments,
   postArticleAdd,
   getArticleItemByIdDel,
@@ -19,6 +21,9 @@ router.get("/:articleId", getArticleItemById);
 router.get("/getComments/:articleId", getComments);
 router.get("/member/:memberId", getArticleItemByMemberId);
 router.get("/articleItem/:articleId", getArticleItemByArticleId);
+router.get("/getCommentsNumber/:articleId", getCommentsNumber);
+router.get("/getHotData/:articleId", getHotData);
+
 
 router.post("/postComments/:articleId", postArticleAddComments);
 router.post("/add", postArticleAdd);

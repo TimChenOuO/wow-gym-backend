@@ -5,7 +5,7 @@ const HttpError = require("../models/http-error");
 //取得文章資料
 const getArticleItems = async (req, res) => {
   const [rows] = await db.query(
-    "SELECT * FROM article  INNER JOIN member ON article.memberId = member.memberId  ORDER BY articleId DESC"
+    "SELECT * FROM article  INNER JOIN user ON article.memberId = user.memberId  ORDER BY articleId DESC"
   );
   res.json(rows);
 };
@@ -16,7 +16,7 @@ const getArticleItemById = async (req, res) => {
     const articleId = req.params.articleId;
     // console.log(articleId);
     const [row] = await db.query(
-      `SELECT * FROM article  INNER JOIN member ON article.memberId = member.memberId WHERE article.articleId=${articleId}`
+      `SELECT * FROM article  INNER JOIN user ON article.memberId = user.memberId WHERE article.articleId=${articleId}`
     );
     if (!row) return next("Can't find article item", 404);
     res.json(row);
@@ -31,7 +31,7 @@ const getComments = async (req, res) => {
     const articleId = req.params.articleId;
     // console.log(articleId);
     const [row] = await db.query(
-      `SELECT * FROM  (article INNER JOIN articlecomments ON articlecomments.articleId = article.articleId)INNER JOIN member ON article.memberId = member.memberId WHERE article.articleId=${articleId}`
+      `SELECT * FROM  (article INNER JOIN articlecomments ON articlecomments.articleId = article.articleId)INNER JOIN user ON article.memberId = user.memberId WHERE article.articleId=${articleId}`
     );
     if (!row) return next("Can't find article item", 404);
     res.json(row);
@@ -61,7 +61,7 @@ const getArticleItemByArticleId = async (req, res) => {
     const articleId = req.params.articleId;
     // console.log(articleId);
     const [row] = await db.query(
-      `SELECT * FROM article  INNER JOIN member ON article.memberId = member.memberId WHERE article.articleId=${articleId}`
+      `SELECT * FROM article  INNER JOIN user ON article.memberId = user.memberId WHERE article.articleId=${articleId}`
     );
     if (!row) return next("Can't find article item", 404);
     res.json(row);
@@ -70,7 +70,44 @@ const getArticleItemByArticleId = async (req, res) => {
   }
 };
 
-//傳送留言
+
+//取得留言數目
+const getCommentsNumber = async (req, res) => {
+  console.log(req.params.articleId)
+  try {
+    const articleId = req.params.articleId;
+    // console.log(articleId);
+    const [row] = await db.query(
+      `SELECT COUNT(1) FROM  (article INNER JOIN articlecomments ON articlecomments.articleId = article.articleId)INNER JOIN user ON article.memberId = user.memberId WHERE article.articleId=?`,[articleId]
+    );
+    if (!row) return next("Can't find article item", 404);
+    res.json(row);
+  } catch (err) {
+    return next(new HttpError("Can't find article item", 404));
+  }
+};
+
+//取得熱門文章資料
+const getHotData = async (req, res) => {
+  console.log(req.params.articleId)
+  try {
+    const articleId = req.params.articleId;
+    // console.log(articleId);
+    const [row] = await db.query(
+      `SELECT * FROM article ORDER BY articleLike DESC limit 6`,[articleId]
+    );
+    if (!row) return next("Can't find article item", 404);
+    res.json(row);
+  } catch (err) {
+    return next(new HttpError("Can't find article item", 404));
+  }
+};
+
+
+
+
+
+//傳送留言資料
 const postArticleAddComments = async (req, res) => {
   const output = {
     success: false,
@@ -93,6 +130,7 @@ const postArticleAddComments = async (req, res) => {
   });
   //res.json(req.body);
 };
+
 
 //新增文章
 const postArticleAdd = async (req, res) => {
@@ -153,12 +191,17 @@ const postArticleItemByIdUpdate = async (req, res, next) => {
   //res.json(req.body);
 };
 
+
+
+
 module.exports = {
   getArticleItems,
   getArticleItemById,
   getComments,
   getArticleItemByMemberId,
   getArticleItemByArticleId,
+  getCommentsNumber,
+  getHotData,
   postArticleAddComments,
   postArticleAdd,
   postArticleItemByIdUpdate,
