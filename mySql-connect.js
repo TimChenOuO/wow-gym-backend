@@ -18,11 +18,11 @@ const pool = mysql.createPool({
 // });
 
 // production config
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "wow-gym",
-});
+// const pool = mysql.createPool({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "wow-gym",
+// });
 
 module.exports = pool.promise();

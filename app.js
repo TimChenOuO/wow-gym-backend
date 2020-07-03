@@ -13,6 +13,8 @@ const articleRoutes = require("./routes/article-routes");
 
 const app = express();
 
+
+//老師的白名單
 const corsOptions = {
   origin:[
     "http://localhost:5000",

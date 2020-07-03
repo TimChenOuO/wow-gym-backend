@@ -31,5 +31,4 @@ router.post("/bookingData/:courseBookingId", updateBooking)
 router.post("/data", reduceNumOfCourse)
 router.post("/addNumOfCourse", addNumOfCourse)
 
-
 module.exports = router;
