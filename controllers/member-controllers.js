@@ -13,7 +13,7 @@ const getMember = async (req, res) => {
 };
 
 const getMemberId = async (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
   try {
     const newRow = {};
     const userId = req.params.userId;
