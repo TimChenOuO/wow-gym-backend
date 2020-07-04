@@ -1,13 +1,32 @@
 const db = require("../mySql-connect");
 const HttpError = require("../models/http-error");
+const moment = require('moment');
+// const getcustomerItems = async (req, res) => {
+//   const [rows] = await db.query("SELECT `user`.`memberId`,`customerservice`.`memberId`,`customerservice`.`complaintkind`,`customerservice`.`complaintkind`,`customerservice`.`name` ,`customerservice`.`phonenumber`,`customerservice`.`email` ,`customerservice`.`complainttitle` ,`customerservice`.`	complainttextarea` ,`customerservice`.`createtime` FROM `customerservice` INNER JOIN `user` ON `customerservice`.`memberId` = `user`.`memberId`" )
+//   res.json(rows);
+// };
 
 const getcustomerItems = async (req, res) => {
   const [rows] = await db.query("SELECT * FROM 	customerservice")
+  for(
+    let i of rows
+  )
+  {
+    i.createtime = moment(i.createtime).format('YYYY/MM/DD HH:mm:ss');
+    i.replytime = moment(i.replytime).format('YYYY/MM/DD HH:mm:ss');
+  }
   res.json(rows);
 };
 
 const getreplylist = async (req, res) => {
   const [rows] = await db.query("SELECT * FROM replylist")
+  for(
+    let i of rows
+  )
+  {
+    i.createtime = moment(i.createtime).format('YYYY/MM/DD HH:mm:ss');
+    i.replytime = moment(i.replytime).format('YYYY/MM/DD HH:mm:ss');
+  }
   res.json(rows);
 };
 
@@ -17,9 +36,9 @@ const getfaqlist = async (req, res) => {
 };
 
 const postcustomerItems = async (req, res) => {
-  const {memberid, complaintkind,name,phonenumber,email,complainttitle,complainttextarea} = req.body;
-    const sql = 'INSERT into `customerservice` (`memberid`, `complaintkind`, `name`, `phonenumber`, `email`,`complainttitle`, `complainttextarea`) VALUES (? , ?, ? , ? , ?, ?, ?)';
-    const result = await db.query(sql,[memberid, complaintkind,name,phonenumber,email,complainttitle,complainttextarea])
+  const {memberId, complaintkind,name,phonenumber,email,complainttitle,complainttextarea} = req.body;
+    const sql = 'INSERT into `customerservice` (`memberId`, `complaintkind`, `name`, `phonenumber`, `email`,`complainttitle`, `complainttextarea`) VALUES (? , ?, ? , ? , ?, ?, ?)';
+    const result = await db.query(sql,[memberId, complaintkind,name,phonenumber,email,complainttitle,complainttextarea])
   
   // const {Complaintid, responder, replycontent} = req.body;
   // console.log("Complaintid",Complaintid,"responder",responder,"replycontent",replycontent)
