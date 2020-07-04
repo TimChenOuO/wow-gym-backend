@@ -88,7 +88,7 @@ const getBookingData = async (req, res) => {
 const getMemberBookingData = async (req, res) => {
   const newRow = {};
   const [rows] = await db.query(
-    "SELECT `m`.`id`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda`, `e`.`Elicense`, `cb`.`bookingState`, `e`.`Eexpertise`, `e`.`Eimg` FROM `user` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`id` = `cb`.`id` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid` ORDER BY `c`.`courseTime`"
+    "SELECT `m`.`id`, `cb`.`courseBookingId`, `c`.`courseId`, `c`.`staffId`, `e`.`Ename`, `c`.`courseCategoryId`, `c`.`categoryName`, `c`.`courseName`, `c`.`courseImg`, `c`.`courseIntroduce`, `c`.`courseTime`, `c`.`courseHour`, `c`.`numberOfCourse`, `c`.`courseQuoda`, `e`.`Elicense`, `cb`.`bookingState`, `e`.`Eexpertise`, `e`.`Eimg` FROM `user` AS `m` INNER JOIN `courseBooking` AS `cb` ON `m`.`id` = `cb`.`memberId` INNER JOIN `courses` AS `c` ON `cb`.`courseId` = `c`.`courseId` INNER JOIN `employee` AS `e` ON `c`.`staffId` = `e`.`Eid` ORDER BY `c`.`courseTime`"
   );
   for (i of rows) {
     const fm = "ddd MM DD HH:mm";

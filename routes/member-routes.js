@@ -1,13 +1,21 @@
 const express = require("express");
 const passport = require("passport");
 
-// const {
-//   getMember,
-//   getMemberId,
-//   // InsertCheckOutPage,
-// } = require("../controllers/member-controllers");
+const {
+  getMember,
+  getMemberId,
+  InsertCheckOutPage,
+  UpdateUser
+} = require("../controllers/member-controllers");
 
 const router = express.Router();
+
+
+router.get("/profile",getMember)
+
+router.get("/profile/:userId",getMemberId)
+
+router.post("/profile/UpdateUser",UpdateUser)
 
 router.get(
   "/google",

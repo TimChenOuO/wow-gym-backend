@@ -197,7 +197,7 @@ const additem = (req, res) => {
 
 const ordres = (req, res) => {
   const sql =
-    "INSERT INTO `orders`(`Total`, `PayMentMethod`, `MemberId`,`OrderStatus`, `CustomerService`, `CancelStatus`) VALUES (?,?,?,2,2,2)";
+    "INSERT INTO `orders`(`Total`, `PayMentMethod`, `MemberId`,`OrderStatus`, `CustomerService`, `CancelStatus`) VALUES (?,?,?,1,1,1)";
   db.query(sql, [
     req.body.orders.Total,
     req.body.orders.pay,

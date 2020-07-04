@@ -13,12 +13,13 @@ const getMember = async (req, res) => {
 };
 
 const getMemberId = async (req, res, next) => {
+  console.log(req.body)
   try {
     const newRow = {};
     const userId = req.params.userId;
     //   console.log(memberId);
     const [rows] = await db.query(
-      `SELECT * FROM user WHERE memberId=${userId}`
+      `SELECT * FROM user WHERE id=${userId}`
     );
     if (rows) newRow.membersRow = rows;
     // console.log(row)
@@ -29,9 +30,9 @@ const getMemberId = async (req, res, next) => {
       res.json({ memberItem: newRow });
     }
   } catch (err) {
-    // return next(new HttpError("Can't find shop item", 404));
+    return next(new HttpError("Can't find shop item", 404));
   }
-};
+}
 
 // const GetApi = async (req) => {
 //   const perPage = 5;
@@ -71,28 +72,54 @@ const getMemberId = async (req, res, next) => {
 //   console.log(output);
 // };
 
-const InsertCheckOutPage = async (req, res) => {
+
+
+
+
+
+
+
+const InsertCheckOutPage = (req, res) => {
+  // console.log(req.body.data);
   const output = {
     success: false,
   };
-  // Check sign up email have exist or not
-  const [checkEmailList] = await db.query("SELECT memberAccount FROM user");
-  if (
-    checkEmailList.find((user) => user.memberAccount === req.body.memberAccount)
-  )
-    return res.json(output);
-
-  // Insert sign up info in DB
   const sql = "INSERT INTO `user` set ?";
-  await db.query(sql, [req.body]);
-
-  // Query sign up info from DB
-  const [signUpUser] = await db.query(
-    "SELECT * FROM user ORDER BY memberId DESC LIMIT 1"
-  );
-  output.success = true;
-  output.currentUser = signUpUser[0];
-  res.json(output);
+  db.query(sql, [req.body]).then(([r]) => {
+    output.results = r;
+    if (r.affectedRows && r.insertId) {
+      output.success = true;
+    }
+    res.json(output);
+  });
+  // res.json(req.body);
 };
 
-module.exports = { getMember, getMemberId, InsertCheckOutPage };
+const UpdateUser = (req, res) => {
+  // console.log(req.body.data)
+  const output = {
+    success: false
+  }
+  for (let i of [req.body.data]) {
+    i.memberAddress ?
+    i.memberAddress = req.body.city + req.body.contury + req.body.data.memberAddress :
+    i.memberAddress =''
+  }
+  const sql = `UPDATE user SET  ? WHERE id = ? `;
+  db.query(sql, [req.body.data, req.body.memberid])
+    .then(([r]) => {
+      output.results = r;
+      if (r.affectedRows && r.insertId) {
+        output.success = true;
+      }
+      res.json(output);
+    })
+
+}
+
+
+
+
+
+
+module.exports = { getMember, getMemberId, InsertCheckOutPage, UpdateUser };
