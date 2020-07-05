@@ -51,7 +51,7 @@ const getComments = async (req, res, next) => {
 const getArticleItemByMemberId = async (req, res, next) => {
   try {
     const memberId = req.params.id;
-    console.log(memberId);
+    // console.log(memberId);
     const [row] = await db.query(
       `SELECT * FROM article  WHERE article.memberId=${memberId}`
     );
