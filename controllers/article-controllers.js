@@ -51,7 +51,7 @@ const getComments = async (req, res, next) => {
 const getArticleItemByMemberId = async (req, res, next) => {
   try {
     const memberId = req.params.id;
-    console.log(memberId);
+    // console.log(memberId);
     const [row] = await db.query(
       `SELECT * FROM article  WHERE article.memberId=${memberId}`
     );
@@ -124,7 +124,7 @@ const postArticleAddComments = async (req, res) => {
   const output = {
     success: false,
   };
-  // console.log(req.body);
+  console.log(req.body);
   const sql =
     "INSERT INTO `articlecomments`(`articleId`, `memberId`, `memberName`, `content`, `memberImg`) VALUES (?,?,?,?,?) ";
   db.query(sql, [
@@ -133,6 +133,7 @@ const postArticleAddComments = async (req, res) => {
     req.body.data.memberName,
     req.body.data.content,
     req.body.data.memberImg,
+    // console.log(req.body.data.memberImg)
   ]).then(([r]) => {
     output.results = r;
     if (r.affectedRows && r.insertId) {
@@ -152,7 +153,7 @@ const postArticleAdd= async (req, res) => {
 
   };
 
-  console.log(req.body);
+  // console.log(req.body);
   const sql =
     "INSERT INTO `article`(`memberId`, `memberName`, `articleTitle`, `categoryName`, `articleContent`,`tagName1`,`tagName2`,`articleImages`,`memberImg`) VALUES (?,?,?,?,?,?,?,?,?) ";
   db.query(sql, [
@@ -211,10 +212,13 @@ const postArticleLikeUpdate = async (req, res) => {
   const output = {
     success: false,
   };
-  console.log(req.body)
-  const sql = `UPDATE article SET articleLike=articleLike+1 WHERE articleId = ?`;
-  db.query(sql, [
+  // console.log(req.body.active)
+  const flag = req.body.flag
+  const sql = `UPDATE article SET articleLike=articleLike+1,flag='Y' WHERE articleId = ?`;
+  const sql1 = `UPDATE article SET articleLike=articleLike-1,flag='N' WHERE articleId = ?`;
+  db.query(flag == 'Y' ? sql: sql1, [
     req.body.articleId,
+
   ]).then(([r]) => {
     output.results = r;
     if (r.affectedRows) { //是否更新一筆
