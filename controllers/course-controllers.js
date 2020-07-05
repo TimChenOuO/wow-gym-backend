@@ -93,6 +93,7 @@ const getMemberBookingData = async (req, res) => {
   for (i of rows) {
     const fm = "ddd MM DD HH:mm";
     i.currentDay = i.courseTime.getDay()
+    i.courseTime1 = i.courseTime
     i.courseTime2 = new Date(i.courseTime).getTime();
     i.courseTime3 = moment(i.courseTime).format(fm);
   }
